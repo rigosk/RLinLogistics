@@ -40,7 +40,7 @@ class judgesSchedule(Env):
                     "hours":self.new_case()[1]} #availability
 
 
-        self.standard_deviation=0
+        self.standard_deviation=0 #deviation of hours among judges
 
         self.length=0
     def step(self,action):
@@ -52,6 +52,10 @@ class judgesSchedule(Env):
         #update state
         if  self.state["dayToSchedule"][action]<self.days_to_schedule-1:
             self.state["dayToSchedule"][action] +=1
+
+        self.state["totalHours"][action]+= self.state["hours"]
+        self.state["next_case"]=self.new_case()[0]
+        self.state["hours"] = self.new_case()[1]
         self.standard_deviation = np.std(self.state["totalHours"])
 
         # Calculate reward for the action before we change state
@@ -77,6 +81,7 @@ class judgesSchedule(Env):
 
     def render(self):
         pass
+
     def reset(self):
         availability = []
         for t in (np.random.choice(a=[0, 1], size=(self.num_of_judges, self.days_to_schedule),
@@ -97,7 +102,7 @@ class judgesSchedule(Env):
         case = np.random.choice(a=np.arange(self.num_of_specialities), size=(1, 1), p=self.case_probability).item()
         hours = np.random.choice(a=np.arange(0, self.max_hours_for_case ), size=(1, 1),
                                  p=self.hours_probability).item()
-        return case, hours
+        return case, hours+1
         # Calculate probability case specialty
 
     def init_case_classes_probability(self, num_of_case_classes):

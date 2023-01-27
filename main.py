@@ -5,6 +5,9 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import results_plotter
 
 
+
+
+
 def main():
 
     #initialize the environment
@@ -16,31 +19,37 @@ def main():
 
     env = judgesSchedule(num_of_judges,days_to_schedule, num_of_trial_classes,max_hours_for_case)
 
-    episodes=50
+    episodes=10
     for episode in range(episodes+1):
         obs=env.reset()
-        print(obs)
+        #print(obs)
         done=False
         score=0
 
         while not done:
             env.render()
             action=env.action_space.sample()
+
             obs,reward,done,info=env.step(action)
+            print(action)
+            print(obs)
             score+=reward
         print("Episode:{},Score:{}".format(episode,score))
 
 
     log_path=os.path.join('Training','Logs')
     model = DQN("MultiInputPolicy", env, verbose=1,tensorboard_log=log_path)
-    model.learn(total_timesteps=10000, log_interval=4)
+    model.learn(total_timesteps=1000, log_interval=4)
 
 
 
 
         
 if __name__ == '__main__':
-   main()
 
+    main()
+    os.system('python -m tensorboard.main --logdir=' + os.path.join('Training', 'Logs'))
 
+#Action masking
+#pytorch
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
