@@ -17,7 +17,7 @@ def main():
     max_hours_for_case = 4 # Generate max workload
 
 
-    env = judgesSchedule(num_of_judges,days_to_schedule, num_of_trial_classes,max_hours_for_case)
+    env = judgesSchedule(num_of_judges, num_of_trial_classes, days_to_schedule, max_hours_for_case)
 
     episodes=10
     for episode in range(episodes+1):
@@ -27,19 +27,21 @@ def main():
         score=0
 
         while not done:
-            env.render()
-            action=env.action_space.sample()
+            env.render() 
+            action=env.action_space.sample() #random action, not based on the observation state. 
 
             obs,reward,done,info=env.step(action)
             print(action)
             print(obs)
             score+=reward
+            print(score)
         print("Episode:{},Score:{}".format(episode,score))
 
 
     log_path=os.path.join('Training','Logs')
     model = DQN("MultiInputPolicy", env, verbose=1,tensorboard_log=log_path)
-    model.learn(total_timesteps=1000, log_interval=4)
+    #model = DQN("MultiInputPolicy", env, verbose=1)
+    model.learn(total_timesteps=100000, log_interval=4)
 
 
 
